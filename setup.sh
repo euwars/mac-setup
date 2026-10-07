@@ -18,12 +18,10 @@ claude mcp get cua-driver >/dev/null 2>&1 ||
   claude mcp add --scope user --transport stdio cua-driver -- "$HOME/.local/bin/cua-driver" mcp
 
 say "Screen control permissions"
-echo "Turn on CuaDriver in the two Settings panes that open (Accessibility, then Screen Recording)."
-open -n -g -a CuaDriver --args serve 2>/dev/null || true
-open "x-apple.systempreferences:com.apple.preference.security?Privacy_Accessibility"
-read -rp "Press Enter when Accessibility is on... " </dev/tty
-open "x-apple.systempreferences:com.apple.preference.security?Privacy_ScreenCapture"
-read -rp "Press Enter when Screen Recording is on... " </dev/tty
+echo "Click Allow on each macOS prompt for CuaDriver."
+until "$HOME/.local/bin/cua-driver" permissions grant </dev/tty; do
+  read -rp "Permissions not granted yet. Press Enter to try again... " </dev/tty
+done
 
 # Start Claude in a fresh Terminal window so it picks up the new PATH and MCP server.
 KICKOFF="Set up this Mac hands-off. Use the cua-driver tools for anything with a GUI. \
